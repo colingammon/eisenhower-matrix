@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eisenhower Matrix</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2307111f'/%3E%3Crect x='4' y='4' width='26' height='26' fill='%235c7cff' rx='2'/%3E%3Crect x='34' y='4' width='26' height='26' fill='%2378beff' rx='2'/%3E%3Crect x='4' y='34' width='26' height='26' fill='%23ffb74d' rx='2'/%3E%3Crect x='34' y='34' width='26' height='26' fill='%23ff7a7a' rx='2'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero__copy">
+          <p class="eyebrow">Prioritize with clarity</p>
+          <h1>Eisenhower Matrix</h1>
+          <p>
+            Capture tasks, move them between urgency and importance, and keep your plan saved automatically.
+          </p>
+          <p class="hero__shortcuts">
+            Shortcuts: Ctrl/Cmd + Enter to add, Ctrl + Shift + 1–4 to quick-add, Ctrl/Cmd + F to search, click title or E to edit, Delete to remove, 1–4 to move, Ctrl/Cmd + Z to undo, Ctrl/Cmd + R to redo, Esc to exit, and ↑/↓ to reorder.
+          </p>
+          <p class="hero__note">
+            <em>Note: On Mac, if Ctrl+Shift+2 doesn't work, use Ctrl+Shift+S to add to "Schedule" instead. See <a href="SHORTCUTS.md">SHORTCUTS.md</a> for all keyboard commands.</em>
+          </p>
+        </div>
+
+        <form id="task-form" class="task-form">
+          <label class="sr-only" for="task-title">Task name</label>
+          <input id="task-title" name="title" type="text" maxlength="80" placeholder="What needs attention?" required />
+
+          <label class="sr-only" for="task-quadrant">Choose a quadrant</label>
+          <select id="task-quadrant" name="quadrant">
+            <option value="do">Do First</option>
+            <option value="schedule">Schedule</option>
+            <option value="delegate">Delegate</option>
+            <option value="eliminate">Eliminate</option>
+          </select>
+
+          <button type="submit">Add card</button>
+        </form>
+      </header>
+
+      <div class="toolbar">
+        <label class="toolbar__label" for="task-search">Search cards</label>
+        <div class="toolbar__actions">
+          <input id="task-search" class="task-search" type="search" placeholder="Search cards or dates" />
+          <button id="theme-toggle" class="toolbar__theme" type="button" aria-label="Toggle dark/light theme">☾</button>
+          <button id="reset-matrix" class="toolbar__reset" type="button">Reset matrix</button>
+        </div>
+      </div>
+
+      <main class="matrix-grid">
+        <section class="quadrant quadrant--do" data-quadrant="do">
+          <div class="quadrant__header">
+            <div>
+              <p class="quadrant__label"><span class="quadrant__icon">▲</span> Do First</p>
+              <h2>Urgent &amp; Important</h2>
+            </div>
+            <span class="badge" id="count-do">0</span>
+          </div>
+          <div class="dropzone" id="do"></div>
+        </section>
+
+        <section class="quadrant quadrant--schedule" data-quadrant="schedule">
+          <div class="quadrant__header">
+            <div>
+              <p class="quadrant__label"><span class="quadrant__icon">◻</span> Schedule</p>
+              <h2>Not Urgent &amp; Important</h2>
+            </div>
+            <span class="badge" id="count-schedule">0</span>
+          </div>
+          <div class="dropzone" id="schedule"></div>
+        </section>
+
+        <section class="quadrant quadrant--delegate" data-quadrant="delegate">
+          <div class="quadrant__header">
+            <div>
+              <p class="quadrant__label"><span class="quadrant__icon">◐</span> Delegate</p>
+              <h2>Urgent &amp; Not Important</h2>
+            </div>
+            <span class="badge" id="count-delegate">0</span>
+          </div>
+          <div class="dropzone" id="delegate"></div>
+        </section>
+
+        <section class="quadrant quadrant--eliminate" data-quadrant="eliminate">
+          <div class="quadrant__header">
+            <div>
+              <p class="quadrant__label"><span class="quadrant__icon">✕</span> Eliminate</p>
+              <h2>Not Urgent &amp; Not Important</h2>
+            </div>
+            <span class="badge" id="count-eliminate">0</span>
+          </div>
+          <div class="dropzone" id="eliminate"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="context-menu" class="context-menu" hidden>
+      <p class="context-menu__title">Move to</p>
+      <button class="context-menu__item" data-quadrant="do" type="button">Do First</button>
+      <button class="context-menu__item" data-quadrant="schedule" type="button">Schedule</button>
+      <button class="context-menu__item" data-quadrant="delegate" type="button">Delegate</button>
+      <button class="context-menu__item" data-quadrant="eliminate" type="button">Eliminate</button>
+    </div>
+
+    <div id="reset-dialog" class="dialog" hidden>
+      <div class="dialog__panel" role="dialog" aria-modal="true" aria-labelledby="reset-dialog-title">
+        <h2 id="reset-dialog-title">Reset matrix?</h2>
+        <p>This will remove every card from the matrix and clear your saved board.</p>
+        <div class="dialog__actions">
+          <button id="cancel-reset" class="dialog__button dialog__button--secondary" type="button">Cancel</button>
+          <button id="confirm-reset" class="dialog__button dialog__button--danger" type="button">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
