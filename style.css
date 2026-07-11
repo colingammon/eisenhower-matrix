@@ -163,6 +163,31 @@ select {
   color: #888888;
 }
 
+.toolbar__button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 0.95rem;
+  background: rgba(92, 124, 255, 0.16);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 180ms ease;
+}
+
+.toolbar__button:hover {
+  background: rgba(92, 124, 255, 0.24);
+}
+
+:root[data-theme="light"] .toolbar__button {
+  background: rgba(92, 124, 255, 0.12);
+  color: #2d3e8f;
+}
+
+:root[data-theme="light"] .toolbar__button:hover {
+  background: rgba(92, 124, 255, 0.2);
+}
+
 .toolbar__theme {
   border: none;
   border-radius: 999px;
@@ -180,6 +205,14 @@ select {
 
 .toolbar__theme:hover {
   background: rgba(92, 124, 255, 0.24);
+}
+
+:root[data-theme="light"] .toolbar__theme {
+  background: rgba(92, 124, 255, 0.12);
+}
+
+:root[data-theme="light"] .toolbar__theme:hover {
+  background: rgba(92, 124, 255, 0.2);
 }
 
 .toolbar__reset {
@@ -561,10 +594,18 @@ select {
   position: fixed;
   inset: 0;
   z-index: 40;
-  display: grid;
+  display: none;
   place-items: center;
   padding: 1rem;
   background: rgba(3, 8, 15, 0.75);
+}
+
+.dialog:not([hidden]) {
+  display: grid;
+}
+
+.dialog[hidden] {
+  display: none !important;
 }
 
 .dialog__panel {
@@ -605,9 +646,29 @@ select {
   color: var(--text);
 }
 
+.dialog__button--primary {
+  background: #3b6bff;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.dialog__button--primary:hover {
+  background: #5c7cff;
+}
+
 .dialog__button--danger {
   background: rgba(255, 122, 122, 0.2);
   color: #ffd0d0;
+}
+
+:root[data-theme="light"] .dialog__button--secondary {
+  background: #f0f4ff;
+  color: #2d3e8f;
+}
+
+:root[data-theme="light"] .dialog__button--primary {
+  background: #5c7cff;
+  color: #ffffff;
 }
 
 @keyframes card-pop {

@@ -24,7 +24,15 @@ const cancelResetButton = document.getElementById('cancel-reset');
 const confirmResetButton = document.getElementById('confirm-reset');
 const contextMenu = document.getElementById('context-menu');
 const themeToggle = document.getElementById('theme-toggle');
+const exportButton = document.getElementById('export-tasks');
+const importButton = document.getElementById('import-tasks');
+const importFileInput = document.getElementById('import-file');
+const importDialog = document.getElementById('import-dialog');
+const importCancelButton = document.getElementById('import-cancel');
+const importMergeButton = document.getElementById('import-merge');
+const importReplaceButton = document.getElementById('import-replace');
 let activeContextTaskId = null;
+let pendingImportData = null;
 
 function loadTasks() {
   try {
@@ -92,6 +100,99 @@ function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
   const newTheme = currentTheme === 'light' ? 'dark' : 'light';
   setTheme(newTheme);
+}
+
+function exportTasks() {
+  const dataStr = JSON.stringify(tasks, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  const now = new Date().toISOString().split('T')[0];
+  link.href = url;
+  link.download = `eisenhower-matrix-backup-${now}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function importTasks() {
+  importFileInput.click();
+}
+
+function openImportDialog(importedTasks) {
+  pendingImportData = importedTasks;
+  importDialog.hidden = false;
+  importDialog.style.display = 'grid';
+}
+
+function closeImportDialog() {
+  importDialog.hidden = true;
+  importDialog.style.display = 'none';
+  pendingImportData = null;
+}
+
+function mergeImportedTasks() {
+  if (!pendingImportData) return;
+
+  const merged = [...tasks, ...pendingImportData];
+  tasks = merged;
+  saveTasks();
+  render();
+  closeImportDialog();
+}
+
+function replaceWithImportedTasks() {
+  if (!pendingImportData) return;
+
+  tasks = pendingImportData;
+  selectedTaskId = null;
+  saveTasks();
+  render();
+  closeImportDialog();
+}
+
+function handleImportFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const content = e.target?.result;
+      if (typeof content !== 'string') return;
+
+      const importedData = JSON.parse(content);
+
+      if (!Array.isArray(importedData)) {
+        alert('Invalid format: expected an array of tasks');
+        return;
+      }
+
+      if (importedData.length === 0) {
+        alert('The file contains no tasks');
+        return;
+      }
+
+      const validTasks = importedData.every(task =>
+        task.id && typeof task.id === 'string' &&
+        task.title && typeof task.title === 'string' &&
+        task.quadrant && ['do', 'schedule', 'delegate', 'eliminate'].includes(task.quadrant)
+      );
+
+      if (!validTasks) {
+        alert('Invalid format: tasks must have id, title, and quadrant properties');
+        return;
+      }
+
+      openImportDialog(importedData);
+    } catch (error) {
+      alert('Error reading file: ' + error.message);
+    }
+  };
+
+  reader.readAsText(file);
+  importFileInput.value = '';
 }
 
 function escapeHtml(value) {
@@ -664,6 +765,22 @@ document.addEventListener('click', (event) => {
 });
 
 themeToggle.addEventListener('click', toggleTheme);
+exportButton.addEventListener('click', exportTasks);
+importButton.addEventListener('click', importTasks);
+importFileInput.addEventListener('change', handleImportFile);
+importCancelButton.addEventListener('click', closeImportDialog);
+importMergeButton.addEventListener('click', mergeImportedTasks);
+importReplaceButton.addEventListener('click', replaceWithImportedTasks);
+
+importDialog.addEventListener('click', (event) => {
+  if (event.target === importDialog) {
+    closeImportDialog();
+  }
+});
+
+// Ensure dialogs are hidden on load
+resetDialog.hidden = true;
+importDialog.hidden = true;
 
 loadTheme();
 render();

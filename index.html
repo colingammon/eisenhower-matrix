@@ -3,9 +3,66 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eisenhower Matrix</title>
+    <title>Eisenhower Matrix - Free Task Prioritization App</title>
+    <meta name="description" content="Organize tasks by urgency and importance with Eisenhower Matrix. Free, fast, and works offline. No sign-up required. Keyboard shortcuts included." />
+    <meta name="keywords" content="eisenhower matrix, task management, prioritization, productivity, todo, time management, urgent important" />
+    <meta name="author" content="Eisenhower Matrix" />
+    <meta name="language" content="English" />
+    <meta name="robots" content="index, follow" />
+    <meta name="canonical" href="https://eisenhower-matrix.online/" />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://eisenhower-matrix.online/" />
+    <meta property="og:title" content="Eisenhower Matrix - Free Task Prioritization" />
+    <meta property="og:description" content="Organize tasks by urgency and importance. Free, fast, no sign-up needed. Light and dark themes, keyboard shortcuts, local storage." />
+    <meta property="og:image" content="https://eisenhower-matrix.online/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Eisenhower Matrix" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://eisenhower-matrix.online/" />
+    <meta name="twitter:title" content="Eisenhower Matrix - Free Task Prioritization" />
+    <meta name="twitter:description" content="Organize tasks by urgency and importance. Free, fast, works offline. No sign-up required." />
+    <meta name="twitter:image" content="https://eisenhower-matrix.online/og-image.png" />
+
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2307111f'/%3E%3Crect x='4' y='4' width='26' height='26' fill='%235c7cff' rx='2'/%3E%3Crect x='34' y='4' width='26' height='26' fill='%2378beff' rx='2'/%3E%3Crect x='4' y='34' width='26' height='26' fill='%23ffb74d' rx='2'/%3E%3Crect x='34' y='34' width='26' height='26' fill='%23ff7a7a' rx='2'/%3E%3C/svg%3E" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2307111f'/%3E%3Crect x='4' y='4' width='26' height='26' fill='%235c7cff' rx='2'/%3E%3Crect x='34' y='4' width='26' height='26' fill='%2378beff' rx='2'/%3E%3Crect x='4' y='34' width='26' height='26' fill='%23ffb74d' rx='2'/%3E%3Crect x='34' y='34' width='26' height='26' fill='%23ff7a7a' rx='2'/%3E%3C/svg%3E" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Eisenhower Matrix",
+      "description": "Free task prioritization app using the Eisenhower Matrix framework. Organize tasks by urgency and importance.",
+      "url": "https://eisenhower-matrix.online/",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Eisenhower Matrix"
+      },
+      "featureList": [
+        "Drag and drop task management",
+        "Light and dark themes",
+        "Keyboard shortcuts",
+        "Local storage - no sign-up required",
+        "Export and import tasks",
+        "Real-time search",
+        "Offline capable"
+      ]
+    }
+    </script>
+  </head>
   </head>
   <body>
     <div class="app-shell">
@@ -44,10 +101,26 @@
         <label class="toolbar__label" for="task-search">Search cards</label>
         <div class="toolbar__actions">
           <input id="task-search" class="task-search" type="search" placeholder="Search cards or dates" />
+          <button id="export-tasks" class="toolbar__button" type="button" title="Export tasks as JSON">↓ Export</button>
+          <button id="import-tasks" class="toolbar__button" type="button" title="Import tasks from JSON">↑ Import</button>
           <button id="theme-toggle" class="toolbar__theme" type="button" aria-label="Toggle dark/light theme">☾</button>
           <button id="reset-matrix" class="toolbar__reset" type="button">Reset matrix</button>
         </div>
       </div>
+
+    <input id="import-file" type="file" accept=".json" style="display: none;" />
+
+    <div id="import-dialog" class="dialog" hidden>
+      <div class="dialog__panel" role="dialog" aria-modal="true" aria-labelledby="import-dialog-title">
+        <h2 id="import-dialog-title">Import tasks?</h2>
+        <p>You can replace your current tasks or merge with existing ones.</p>
+        <div class="dialog__actions">
+          <button id="import-cancel" class="dialog__button dialog__button--secondary" type="button">Cancel</button>
+          <button id="import-merge" class="dialog__button" type="button">Merge with existing</button>
+          <button id="import-replace" class="dialog__button dialog__button--primary" type="button">Replace all</button>
+        </div>
+      </div>
+    </div>
 
       <main class="matrix-grid">
         <section class="quadrant quadrant--do" data-quadrant="do">

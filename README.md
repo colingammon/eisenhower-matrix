@@ -37,6 +37,8 @@ A modern, interactive web-based task prioritization tool based on the Eisenhower
 ### Data Persistence
 - **Auto-save to browser localStorage** — no server required
 - **Load your tasks automatically** when revisiting the page
+- **Export tasks** as JSON for backup or sharing (↓ Export button)
+- **Import tasks** from JSON file with merge or replace options (↑ Import button)
 - **Reset option** to clear your entire matrix when starting fresh
 
 ## How to Use
@@ -83,6 +85,12 @@ A modern, interactive web-based task prioritization tool based on the Eisenhower
 - Overdue tasks automatically float to the top of their quadrant
 - Ensures urgent tasks are never buried below others
 - Overdue status is checked against today's date
+
+**Backing up and moving data:**
+- **Export**: Click ↓ Export in the toolbar to download your tasks as a JSON file (named with today's date)
+- **Import**: Click ↑ Import to load tasks from a previously exported file
+- Choose to **merge** with existing tasks or **replace** them entirely
+- Useful for backup, sharing with others, or moving between devices
 
 ### Keyboard Shortcuts
 
@@ -180,6 +188,19 @@ eisenhower-matrix/
 ├── script.js       # Interactivity and state management
 └── README.md       # This file
 ```
+
+## Hosting & SEO
+
+This app is hosted on GitHub Pages with a custom domain. 
+
+**SEO improvements implemented:**
+- ✅ Meta tags and descriptions optimized for search engines
+- ✅ Open Graph tags for social media sharing
+- ✅ robots.txt and sitemap.xml for indexing
+- ✅ JSON-LD structured data for rich snippets
+- ✅ Canonical URL configured
+
+See [SEO.md](SEO.md) for setup instructions and monitoring guidance.
 
 ## License
 
