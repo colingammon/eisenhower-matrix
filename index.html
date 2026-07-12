@@ -74,15 +74,15 @@
           <p>
             Capture tasks, move them between urgency and importance, and keep your plan saved automatically.
           </p>
-          <p class="hero__shortcuts">
+          <p class="hero__shortcuts hero__mobile-hide">
             Shortcuts: Ctrl/Cmd + Enter to add, Ctrl + Shift + 1–4 to quick-add, Ctrl/Cmd + F to search, click title or E to edit, Delete to remove, 1–4 to move, Ctrl/Cmd + Z to undo, Ctrl/Cmd + R to redo, Esc to exit, and ↑/↓ to reorder.
           </p>
-          <p class="hero__note">
+          <p class="hero__note hero__mobile-hide">
             <em>Note: On Mac, if Ctrl+Shift+2 doesn't work, use Ctrl+Shift+S to add to "Schedule" instead. See <a href="SHORTCUTS.md">SHORTCUTS.md</a> for all keyboard commands.</em>
           </p>
         </div>
 
-        <form id="task-form" class="task-form">
+        <form id="task-form" class="task-form task-form--desktop">
           <label class="sr-only" for="task-title">Task name</label>
           <input id="task-title" name="title" type="text" maxlength="80" placeholder="What needs attention?" required />
 
@@ -133,6 +133,7 @@
             <span class="badge" id="count-do">0</span>
           </div>
           <div class="dropzone" id="do"></div>
+          <button class="quadrant__add" data-quadrant="do" type="button" aria-label="Add task to Do First">+</button>
         </section>
 
         <section class="quadrant quadrant--schedule" data-quadrant="schedule">
@@ -144,6 +145,7 @@
             <span class="badge" id="count-schedule">0</span>
           </div>
           <div class="dropzone" id="schedule"></div>
+          <button class="quadrant__add" data-quadrant="schedule" type="button" aria-label="Add task to Schedule">+</button>
         </section>
 
         <section class="quadrant quadrant--delegate" data-quadrant="delegate">
@@ -155,6 +157,7 @@
             <span class="badge" id="count-delegate">0</span>
           </div>
           <div class="dropzone" id="delegate"></div>
+          <button class="quadrant__add" data-quadrant="delegate" type="button" aria-label="Add task to Delegate">+</button>
         </section>
 
         <section class="quadrant quadrant--eliminate" data-quadrant="eliminate">
@@ -166,8 +169,33 @@
             <span class="badge" id="count-eliminate">0</span>
           </div>
           <div class="dropzone" id="eliminate"></div>
+          <button class="quadrant__add" data-quadrant="eliminate" type="button" aria-label="Add task to Eliminate">+</button>
         </section>
       </main>
+
+      <div class="mobile-actions">
+        <button id="export-tasks-mobile" class="toolbar__button" type="button" title="Export tasks as JSON">↓ Export</button>
+        <button id="import-tasks-mobile" class="toolbar__button" type="button" title="Import tasks from JSON">↑ Import</button>
+        <button id="reset-matrix-mobile" class="toolbar__reset" type="button">Reset matrix</button>
+      </div>
+    </div>
+
+    <div id="add-task-dialog" class="dialog" hidden>
+      <div class="dialog__panel" role="dialog" aria-modal="true" aria-labelledby="add-task-dialog-title">
+        <h2 id="add-task-dialog-title">Add Task</h2>
+        <form id="add-task-form" class="add-task-form">
+          <label class="sr-only" for="add-task-title">Task name</label>
+          <input id="add-task-title" name="title" type="text" maxlength="80" placeholder="What needs attention?" required />
+
+          <label for="add-task-due" class="add-task-form__label">Due date (optional)</label>
+          <input id="add-task-due" name="due" type="date" />
+
+          <div class="dialog__actions">
+            <button id="cancel-add-task" class="dialog__button dialog__button--secondary" type="button">Cancel</button>
+            <button type="submit" class="dialog__button dialog__button--primary">Add</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <div id="context-menu" class="context-menu" hidden>

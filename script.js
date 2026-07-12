@@ -31,8 +31,14 @@ const importDialog = document.getElementById('import-dialog');
 const importCancelButton = document.getElementById('import-cancel');
 const importMergeButton = document.getElementById('import-merge');
 const importReplaceButton = document.getElementById('import-replace');
+const addTaskDialog = document.getElementById('add-task-dialog');
+const addTaskForm = document.getElementById('add-task-form');
+const addTaskTitleInput = document.getElementById('add-task-title');
+const addTaskDueInput = document.getElementById('add-task-due');
+const cancelAddTaskButton = document.getElementById('cancel-add-task');
 let activeContextTaskId = null;
 let pendingImportData = null;
+let pendingQuadrantForAdd = null;
 
 function loadTasks() {
   try {
@@ -87,7 +93,7 @@ function loadTheme() {
 function setTheme(theme) {
   if (theme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
-    themeToggle.textContent = '☀';
+    themeToggle.textContent = '○';
     localStorage.setItem('eisenhower-matrix-theme', 'light');
   } else {
     document.documentElement.removeAttribute('data-theme');
@@ -572,6 +578,41 @@ function resetMatrix() {
   closeResetDialog();
 }
 
+function openAddTaskDialog(quadrant) {
+  pendingQuadrantForAdd = quadrant;
+  addTaskDialog.hidden = false;
+  addTaskDialog.style.display = 'grid';
+  addTaskTitleInput.focus();
+}
+
+function closeAddTaskDialog() {
+  addTaskDialog.hidden = true;
+  addTaskDialog.style.display = 'none';
+  addTaskForm.reset();
+  pendingQuadrantForAdd = null;
+}
+
+function addTaskFromDialog(event) {
+  event.preventDefault();
+  const title = addTaskTitleInput.value.trim();
+  if (!title || !pendingQuadrantForAdd) {
+    addTaskTitleInput.focus();
+    return;
+  }
+
+  saveUndo();
+  tasks.push({
+    id: window.crypto?.randomUUID?.() ?? `task-${Date.now()}`,
+    title,
+    dueDate: addTaskDueInput.value || '',
+    quadrant: pendingQuadrantForAdd,
+  });
+
+  saveTasks();
+  render();
+  closeAddTaskDialog();
+}
+
 function attachDropzones() {
   document.querySelectorAll('.dropzone').forEach((zone) => {
     zone.addEventListener('dragover', (event) => {
@@ -619,6 +660,12 @@ function isTypingTarget() {
 
 function handleKeyboardShortcuts(event) {
   if (event.key === 'Escape') {
+    if (!addTaskDialog.hidden) {
+      event.preventDefault();
+      closeAddTaskDialog();
+      return;
+    }
+
     if (!resetDialog.hidden) {
       event.preventDefault();
       closeResetDialog();
@@ -778,9 +825,32 @@ importDialog.addEventListener('click', (event) => {
   }
 });
 
+document.querySelectorAll('.quadrant__add').forEach((button) => {
+  button.addEventListener('click', () => {
+    openAddTaskDialog(button.dataset.quadrant);
+  });
+});
+
+addTaskForm.addEventListener('submit', addTaskFromDialog);
+cancelAddTaskButton.addEventListener('click', closeAddTaskDialog);
+addTaskDialog.addEventListener('click', (event) => {
+  if (event.target === addTaskDialog) {
+    closeAddTaskDialog();
+  }
+});
+
+const exportTasksMobile = document.getElementById('export-tasks-mobile');
+const importTasksMobile = document.getElementById('import-tasks-mobile');
+const resetMatrixMobile = document.getElementById('reset-matrix-mobile');
+
+if (exportTasksMobile) exportTasksMobile.addEventListener('click', exportTasks);
+if (importTasksMobile) importTasksMobile.addEventListener('click', importTasks);
+if (resetMatrixMobile) resetMatrixMobile.addEventListener('click', openResetDialog);
+
 // Ensure dialogs are hidden on load
 resetDialog.hidden = true;
 importDialog.hidden = true;
+addTaskDialog.hidden = true;
 
 loadTheme();
 render();

@@ -72,7 +72,7 @@ Quick reference for all keyboard shortcuts in the Eisenhower Matrix.
 - **Quick-add uses Ctrl only (not Cmd):** On Mac, this avoids conflicts with system screenshot shortcuts (Cmd+Shift+2/3/4)
 - **Ctrl+Shift+2 on Mac:** Some Mac systems reserve this key. Use **Ctrl+Shift+S** to add to "Schedule" instead
 - **Overdue tasks float automatically:** They appear at the top of their quadrant regardless of manual ordering
-- **Theme toggle:** Click ☾/☀ in toolbar to switch between dark and light modes (preference saved)
+- **Theme toggle:** Click ☾/○ in toolbar to switch between dark and light modes (preference saved)
 - **All data is local:** Changes save instantly to your browser's localStorage
 
 ---
@@ -87,7 +87,11 @@ Quick reference for all keyboard shortcuts in the Eisenhower Matrix.
 5. Undo mistakes with **Ctrl/Cmd+Z**
 
 **Mobile users:**
-- Tap card to select (blue highlight)
-- Drag cards between quadrants
-- Long-press for context menu (move options)
-- Use on-screen keyboard for most shortcuts
+- **Add tasks:** Tap the **+** button in the bottom-right corner of any quadrant
+- **Search & theme toggle:** Available at the top of the page for easy access
+- **Action buttons:** Export, Import, and Reset buttons positioned at the bottom after the matrix
+- **Select & move:** Tap card to select (blue highlight), then use 1-4 keys or right-click menu to move
+- **Drag between quadrants:** Works on touch devices with long-press
+- **Long-press for context menu:** Open move options without keyboard shortcuts
+- **Due dates:** Tap date input below task title to set or change
+- **Edit titles:** Tap task title to edit inline

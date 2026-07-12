@@ -114,6 +114,19 @@ eisenhower-matrix/
 2. Same as standard flow, but quadrant is determined by key, not dropdown
 3. Faster for users frequently adding to same quadrant
 
+**Mobile "+" button flow:**
+1. User taps "+" button in bottom-right corner of a quadrant
+2. `openAddTaskDialog()` opens modal with form for that quadrant
+3. User enters title (required) and optional due date
+4. Submit form → `addTaskFromDialog()` creates task
+5. `saveUndo()` backs up state, `saveTasks()` persists
+6. `render()` updates UI, modal closes automatically
+7. `pendingQuadrantForAdd` cleared for next use
+
+**Escape key behavior in mobile dialog:**
+1. Escape closes the add task dialog (`closeAddTaskDialog()`)
+2. Resets `pendingQuadrantForAdd` and clears form
+
 ### Undoing and Redoing Actions
 
 **Undo flow (Ctrl/Cmd+Z):**
@@ -169,10 +182,11 @@ eisenhower-matrix/
 
 The Esc key serves multiple purposes, prioritized in this order:
 
-1. **Close dialogs** — If reset dialog is open, close it
-2. **Exit edit mode** — If in task title edit mode, save and exit
-3. **Deselect task** — If a task is selected, deselect it (remove blue highlight)
-4. **Do nothing** — If none of the above, key is ignored
+1. **Close add task dialog** — If mobile add dialog is open, close it
+2. **Close reset dialog** — If reset dialog is open, close it
+3. **Exit edit mode** — If in task title edit mode, save and exit
+4. **Deselect task** — If a task is selected, deselect it (remove blue highlight)
+5. **Do nothing** — If none of the above, key is ignored
 
 This creates a natural "unwinding" of state with a single key.
 
@@ -314,13 +328,21 @@ console.log(event.key, event.ctrlKey, event.metaKey)
 
 ## Recent Additions
 
+**v1.4 Features (Mobile Enhancements):**
+- **Quadrant "+" buttons** — Tap to add a task directly to each quadrant (bottom-right corner)
+- **Mobile add modal** — Simplified form with title + optional due date
+- **Optimized mobile toolbar** — Search + theme toggle at top, action buttons at bottom
+- **Minimalist icon updates** — Theme toggle now uses ☾ (moon) for dark and ○ (circle) for light
+- **Responsive action buttons** — Export, Import, Reset positioned below matrix on mobile
+- **Hidden keyboard help** — Shortcut reference hidden on mobile for cleaner interface
+
 **v1.3 Features:**
 - **Export/Import JSON** — Download tasks as backup or share via file
 - **Merge or replace on import** — Keep existing tasks or start fresh
 - **Date-stamped exports** — Backups named with YYYY-MM-DD for easy organization
 
 **v1.2 Features:**
-- **Light & dark themes** — Toggle ☾/☀ button in toolbar, preference saved to localStorage
+- **Light & dark themes** — Toggle ☾/○ button in toolbar, preference saved to localStorage
 - **Clean line icons** — Replaced emoji with simple line-style icons (▲ □ ◐ ✕) for quadrants
 - **Improved light mode** — White background, high-contrast text, bright readable cards and badges
 - **Flat design** — Removed all gradients for clean, modern aesthetic

@@ -28,11 +28,20 @@ A modern, interactive web-based task prioritization tool based on the Eisenhower
 - **Context menu** for quick task movement (right-click or Ctrl/Cmd + click)
 - **Real-time search** across task titles and dates
 - **Visual feedback** for drag operations and selected tasks
-- **Responsive design** works on desktop and tablet
-- **Light & dark themes** — toggle with the ☾/☀ button in toolbar, preference saved automatically
+- **Responsive design** works on desktop and mobile
+- **Light & dark themes** — toggle with the ☾/○ button in toolbar, preference saved automatically
 - **Undo/Redo support** (Ctrl/Cmd + Z / Ctrl/Cmd + R) — recover from mistakes
 - **Overdue tasks float to top** — never miss what's actually urgent
 - **Quick-add shortcuts** — Ctrl+Shift+1-4 to add directly to any quadrant
+
+### Mobile Optimizations
+- **"+" button in each quadrant** — tap to add a task directly to that quadrant
+- **Simplified mobile form** — quick task entry with optional due date
+- **Search bar with theme toggle** at top for easy access
+- **Action buttons at bottom** — Export, Import, and Reset buttons positioned below the matrix
+- **Minimalist line-style icons** — clean, professional design (▲ □ ◐ ✕ ○ ☾)
+- **Touch-friendly layout** — large tap targets, optimized spacing
+- **Hidden keyboard shortcuts** — reference not shown on mobile for cleaner interface
 
 ### Data Persistence
 - **Auto-save to browser localStorage** — no server required
@@ -44,11 +53,19 @@ A modern, interactive web-based task prioritization tool based on the Eisenhower
 ## How to Use
 
 ### Adding Tasks
+
+**Desktop:**
 1. Type your task in the "What needs attention?" input field
 2. Choose how to add:
    - **Standard**: Select quadrant from dropdown, then press **Ctrl/Cmd + Enter** or click "Add card"
    - **Quick-add**: Press **Ctrl + Shift + 1/2/3/4** to add directly to Do First/Schedule/Delegate/Eliminate (skips dropdown)
 3. Your task appears in the selected quadrant
+
+**Mobile:**
+1. Tap the **+** button in the center-bottom of any quadrant
+2. Enter your task title in the modal form
+3. Optionally set a due date
+4. Tap "Add" to create the task
 
 ### Managing Tasks
 
