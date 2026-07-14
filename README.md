@@ -6,10 +6,10 @@ A modern, interactive web-based task prioritization tool based on the Eisenhower
 
 ### Task Management
 - **Add tasks** to any of the four quadrants with a single input
-- **Drag and drop** tasks between quadrants for quick reorganization
+- **Drag and drop** tasks between quadrants OR within a quadrant to reorder
 - **Edit task titles** inline by clicking the title text
-- **Set due dates** for each task with visual indicators
-- **Delete tasks** with a single click
+- **Set due dates** for each task with visual indicators (tap badge on mobile to edit)
+- **Delete tasks** with confirmation to prevent accidental removal
 - **Search and filter** tasks by title or due date in real-time
 - **Overdue indicators** show when tasks pass their due date
 - **Clean line icons** for each quadrant (▲ □ ◐ ✕)
@@ -69,10 +69,11 @@ A modern, interactive web-based task prioritization tool based on the Eisenhower
 
 ### Managing Tasks
 
-**Moving tasks:**
-- Drag a card to another quadrant
-- Right-click a card and select "Move to"
-- Use **1–4 number keys** to move selected task (1=Do First, 2=Schedule, 3=Delegate, 4=Eliminate)
+**Moving & Reordering tasks:**
+- **Between quadrants:** Drag a card to another quadrant to move it
+- **Within a quadrant:** Drag a card over another task to reorder (on desktop, mobile, and tablet)
+- **Context menu:** Right-click a card and select "Move to" for quick movement
+- **Keyboard:** Use **1–4 number keys** to move selected task (1=Do First, 2=Schedule, 3=Delegate, 4=Eliminate)
 
 **Editing tasks:**
 - Click a card to select it (shows blue highlight)
@@ -80,13 +81,16 @@ A modern, interactive web-based task prioritization tool based on the Eisenhower
 - Click away or press Enter to save changes
 
 **Setting due dates:**
-- Click a task card to select it
-- Use the date picker that appears below the title
+- **Desktop:** Use the date picker that appears below the title
+- **Mobile/Tablet:** Click the "Due [date]" or "+ Add date" badge to open the date picker modal
 - Overdue tasks show a red "Overdue" badge
 
 **Deleting tasks:**
-- Click the **×** button on any card, or
-- Select a card and press **Delete** or **Backspace**
+- Click the **×** button on any card
+- Confirmation dialog appears showing the task name
+- Click "Delete" to confirm, or "Cancel" to keep the task
+- Alternatively: Select a card and press **Delete** or **Backspace**
+- Deleted tasks can be recovered with **Ctrl/Cmd + Z** (Undo)
 
 **Finding tasks:**
 - Press **Ctrl/Cmd + F** to open search
@@ -122,7 +126,8 @@ See [SHORTCUTS.md](SHORTCUTS.md) for the complete keyboard shortcut reference.
 | **Click title** | Edit task inline |
 | **E** | Edit selected task |
 | **1–4** | Move selected task to quadrant |
-| **↑** / **↓** | Reorder task within quadrant |
+| **↑** / **↓** | Reorder task within quadrant (keyboard) |
+| **Drag & drop** | Move between quadrants OR reorder within quadrant (mouse/touch) |
 | **Ctrl/Cmd + Z / R** | Undo / Redo |
 | **Ctrl/Cmd + F** | Search tasks |
 | **Esc** | Context-aware exit (edit → deselect → dialogs) |

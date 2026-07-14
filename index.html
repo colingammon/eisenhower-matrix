@@ -217,6 +217,29 @@
       </div>
     </div>
 
+    <div id="date-dialog" class="dialog" hidden>
+      <div class="dialog__panel" role="dialog" aria-modal="true" aria-labelledby="date-dialog-title">
+        <h2 id="date-dialog-title">Edit Due Date</h2>
+        <input id="date-dialog-input" type="date" />
+        <div class="dialog__actions">
+          <button id="date-dialog-clear" class="dialog__button dialog__button--secondary" type="button">Clear</button>
+          <button id="date-dialog-close" class="dialog__button dialog__button--secondary" type="button">Cancel</button>
+          <button id="date-dialog-save" class="dialog__button dialog__button--primary" type="button">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="delete-dialog" class="dialog" hidden>
+      <div class="dialog__panel" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-title">
+        <h2 id="delete-dialog-title">Delete task?</h2>
+        <p id="delete-dialog-task-name"></p>
+        <div class="dialog__actions">
+          <button id="delete-dialog-cancel" class="dialog__button dialog__button--secondary" type="button">Cancel</button>
+          <button id="delete-dialog-confirm" class="dialog__button dialog__button--danger" type="button">Delete</button>
+        </div>
+      </div>
+    </div>
+
     <script src="script.js"></script>
   </body>
 </html>

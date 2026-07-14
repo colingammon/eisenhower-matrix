@@ -387,6 +387,12 @@ select {
   background: rgba(92, 124, 255, 0.12);
 }
 
+.dropzone.is-target {
+  border-color: var(--accent);
+  border-style: dashed;
+  background: rgba(92, 124, 255, 0.12);
+}
+
 .task-card {
   display: flex;
   align-items: flex-start;
@@ -487,8 +493,21 @@ select {
   background: rgba(92, 124, 255, 0.2);
 }
 
-.task-card__badge--due {
+.task-card__badge--due,
+.task-card__badge--add-date {
   background: rgba(255, 183, 77, 0.18);
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+
+.task-card__badge--due:hover,
+.task-card__badge--add-date:hover {
+  background: rgba(255, 183, 77, 0.28);
+}
+
+.task-card__badge--due:active,
+.task-card__badge--add-date:active {
+  background: rgba(255, 183, 77, 0.35);
 }
 
 .task-card__badge--overdue {
@@ -506,7 +525,8 @@ select {
   color: #2d3e8f;
 }
 
-:root[data-theme="light"] .task-card__badge--due {
+:root[data-theme="light"] .task-card__badge--due,
+:root[data-theme="light"] .task-card__badge--add-date {
   background: rgba(255, 183, 77, 0.25);
   color: #c67700;
 }
@@ -543,6 +563,12 @@ select {
   background: rgba(255, 255, 255, 0.08);
   color: #ff9aa4;
   cursor: pointer;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.task-card__delete:hover {
+  background: rgba(255, 122, 122, 0.16);
+  color: #ffc0c0;
 }
 
 .empty-state {
@@ -726,6 +752,17 @@ select {
   color: #ffd0d0;
 }
 
+#date-dialog-input {
+  width: 100%;
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+  color: var(--text);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
 :root[data-theme="light"] .dialog__button--secondary {
   background: #f0f4ff;
   color: #2d3e8f;
@@ -745,6 +782,24 @@ select {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.touch-drag-ghost {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  padding: 0.85rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(92, 124, 255, 0.3);
+  border: 2px solid var(--accent);
+  color: var(--text);
+  font-size: 0.9rem;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 12px 32px rgba(92, 124, 255, 0.24);
+  opacity: 0.9;
 }
 
 .sr-only {

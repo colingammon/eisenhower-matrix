@@ -13,6 +13,7 @@ let draggedTaskId = null;
 let editingTaskId = null;
 let selectedTaskId = null;
 let searchQuery = '';
+let touchDragState = null;
 
 const taskForm = document.getElementById('task-form');
 const titleInput = document.getElementById('task-title');
@@ -36,9 +37,20 @@ const addTaskForm = document.getElementById('add-task-form');
 const addTaskTitleInput = document.getElementById('add-task-title');
 const addTaskDueInput = document.getElementById('add-task-due');
 const cancelAddTaskButton = document.getElementById('cancel-add-task');
+const dateDialog = document.getElementById('date-dialog');
+const dateDialogInput = document.getElementById('date-dialog-input');
+const dateDialogSaveButton = document.getElementById('date-dialog-save');
+const dateDialogClearButton = document.getElementById('date-dialog-clear');
+const dateDialogCloseButton = document.getElementById('date-dialog-close');
+const deleteDialog = document.getElementById('delete-dialog');
+const deleteDialogTaskName = document.getElementById('delete-dialog-task-name');
+const deleteDialogCancelButton = document.getElementById('delete-dialog-cancel');
+const deleteDialogConfirmButton = document.getElementById('delete-dialog-confirm');
 let activeContextTaskId = null;
 let pendingImportData = null;
 let pendingQuadrantForAdd = null;
+let dateDialogTaskId = null;
+let pendingDeleteTaskId = null;
 
 function loadTasks() {
   try {
@@ -268,11 +280,9 @@ function render() {
             <p class="task-card__title">${formatTaskContent(task.title)}</p>
             <div class="task-card__meta">
               <span class="task-card__badge task-card__badge--priority">${quadrantConfig[task.quadrant].label}</span>
-              ${task.dueDate ? `<span class="task-card__badge task-card__badge--due">Due ${formatDate(task.dueDate)}</span>` : ''}
+              ${task.dueDate ? `<span class="task-card__badge task-card__badge--due" role="button">Due ${formatDate(task.dueDate)}</span>` : `<span class="task-card__badge task-card__badge--add-date" role="button">+ Add date</span>`}
               ${overdue ? '<span class="task-card__badge task-card__badge--overdue">Overdue</span>' : ''}
             </div>
-            <label class="sr-only" for="task-due-${task.id}">Due date</label>
-            <input id="task-due-${task.id}" class="task-card__due" type="date" value="${task.dueDate || ''}" />
           </div>
           <button class="task-card__delete" type="button" aria-label="Delete task">×</button>
         `;
@@ -284,6 +294,12 @@ function render() {
         });
 
         card.addEventListener('click', (event) => {
+          if (event.target.closest('.task-card__badge--due, .task-card__badge--add-date')) {
+            event.stopPropagation();
+            openDateDialog(task.id);
+            return;
+          }
+
           if (event.ctrlKey || event.metaKey) {
             event.preventDefault();
             openContextMenu(event, task.id);
@@ -320,13 +336,6 @@ function render() {
           openContextMenu(event, task.id);
         });
 
-        const dueInput = card.querySelector('.task-card__due');
-        dueInput.addEventListener('change', (event) => {
-          task.dueDate = event.target.value;
-          saveTasks();
-          render();
-        });
-
         card.addEventListener('dragstart', handleDragStart);
         card.addEventListener('dragend', handleDragEnd);
         card.addEventListener('dragover', (event) => {
@@ -341,6 +350,8 @@ function render() {
           card.classList.remove('is-target');
           moveTask(draggedTaskId, quadrant, task.id);
         });
+
+        card.addEventListener('touchstart', handleTouchStart, { passive: false });
 
         fragment.appendChild(card);
       });
@@ -365,6 +376,120 @@ function handleDragStart(event) {
 function handleDragEnd(event) {
   event.currentTarget.classList.remove('is-dragging');
   document.querySelectorAll('.is-target').forEach((element) => element.classList.remove('is-target'));
+}
+
+function handleTouchStart(event) {
+  const card = event.currentTarget;
+  const touch = event.touches[0];
+
+  // Don't drag if touching a date badge or delete button
+  if (event.target.closest('.task-card__badge--due, .task-card__badge--add-date, .task-card__delete')) {
+    return;
+  }
+
+  const taskId = card.dataset.id;
+
+  touchDragState = {
+    taskId: taskId,
+    startX: touch.clientX,
+    startY: touch.clientY,
+    currentX: touch.clientX,
+    currentY: touch.clientY,
+    ghost: null,
+    sourceQuadrant: card.closest('.dropzone').id,
+  };
+
+  event.preventDefault();
+  card.classList.add('is-dragging');
+  createTouchGhost(card);
+}
+
+function createTouchGhost(card) {
+  if (!touchDragState) return;
+
+  const ghost = document.createElement('div');
+  ghost.className = 'touch-drag-ghost';
+  ghost.innerHTML = card.querySelector('.task-card__title').innerHTML;
+  document.body.appendChild(ghost);
+  touchDragState.ghost = ghost;
+
+  updateGhostPosition(touchDragState.currentX, touchDragState.currentY);
+}
+
+function updateGhostPosition(x, y) {
+  if (!touchDragState || !touchDragState.ghost) return;
+
+  touchDragState.ghost.style.left = `${x - 50}px`;
+  touchDragState.ghost.style.top = `${y - 20}px`;
+}
+
+function getTouchTargetQuadrant(x, y) {
+  const dropzones = document.querySelectorAll('.dropzone');
+  for (const zone of dropzones) {
+    const rect = zone.getBoundingClientRect();
+    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+      return zone.id;
+    }
+  }
+  return null;
+}
+
+function handleTouchMove(event) {
+  if (!touchDragState) return;
+
+  event.preventDefault();
+  const touch = event.touches[0];
+  touchDragState.currentX = touch.clientX;
+  touchDragState.currentY = touch.clientY;
+
+  updateGhostPosition(touch.clientX, touch.clientY);
+
+  const targetQuadrant = getTouchTargetQuadrant(touch.clientX, touch.clientY);
+  const targetZone = document.getElementById(targetQuadrant);
+
+  document.querySelectorAll('.dropzone.is-target').forEach((zone) => {
+    zone.classList.remove('is-target');
+  });
+
+  if (targetZone) {
+    targetZone.classList.add('is-target');
+  }
+}
+
+function handleTouchEnd(event) {
+  if (!touchDragState) return;
+
+  const card = document.querySelector(`[data-id="${touchDragState.taskId}"]`);
+  if (card) {
+    card.classList.remove('is-dragging');
+  }
+
+  if (touchDragState.ghost) {
+    touchDragState.ghost.remove();
+  }
+
+  document.querySelectorAll('.dropzone.is-target').forEach((zone) => {
+    zone.classList.remove('is-target');
+  });
+
+  const targetQuadrant = getTouchTargetQuadrant(touchDragState.currentX, touchDragState.currentY);
+
+  if (targetQuadrant) {
+    // Find which task is at the drop location
+    const element = document.elementFromPoint(touchDragState.currentX, touchDragState.currentY);
+    const targetCard = element?.closest('[data-id]');
+    const targetTaskId = targetCard?.dataset.id;
+
+    if (targetQuadrant !== touchDragState.sourceQuadrant) {
+      // Moving to different quadrant
+      moveTask(touchDragState.taskId, targetQuadrant);
+    } else if (targetTaskId && targetTaskId !== touchDragState.taskId) {
+      // Reordering within same quadrant
+      moveTask(touchDragState.taskId, targetQuadrant, targetTaskId);
+    }
+  }
+
+  touchDragState = null;
 }
 
 function moveTask(taskId, destinationQuadrant, targetTaskId = null) {
@@ -397,14 +522,37 @@ function moveTask(taskId, destinationQuadrant, targetTaskId = null) {
   render();
 }
 
-function removeTask(taskId) {
+function openDeleteDialog(taskId) {
+  const task = tasks.find((t) => t.id === taskId);
+  if (!task) return;
+
+  pendingDeleteTaskId = taskId;
+  deleteDialogTaskName.textContent = `Remove "${task.title}"?`;
+  deleteDialog.hidden = false;
+  deleteDialog.style.display = 'grid';
+}
+
+function closeDeleteDialog() {
+  deleteDialog.hidden = true;
+  deleteDialog.style.display = 'none';
+  pendingDeleteTaskId = null;
+}
+
+function confirmDelete() {
+  if (!pendingDeleteTaskId) return;
+
   saveUndo();
-  tasks = tasks.filter((task) => task.id !== taskId);
-  if (selectedTaskId === taskId) {
+  tasks = tasks.filter((task) => task.id !== pendingDeleteTaskId);
+  if (selectedTaskId === pendingDeleteTaskId) {
     selectedTaskId = null;
   }
   saveTasks();
   render();
+  closeDeleteDialog();
+}
+
+function removeTask(taskId) {
+  openDeleteDialog(taskId);
 }
 
 function moveSelectedTask(step) {
@@ -590,6 +738,35 @@ function closeAddTaskDialog() {
   addTaskDialog.style.display = 'none';
   addTaskForm.reset();
   pendingQuadrantForAdd = null;
+}
+
+function openDateDialog(taskId) {
+  const task = tasks.find((t) => t.id === taskId);
+  if (!task) return;
+
+  dateDialogTaskId = taskId;
+  dateDialogInput.value = task.dueDate || '';
+  dateDialog.hidden = false;
+  dateDialog.style.display = 'grid';
+  dateDialogInput.focus();
+}
+
+function closeDateDialog() {
+  dateDialog.hidden = true;
+  dateDialog.style.display = 'none';
+  dateDialogTaskId = null;
+}
+
+function saveDateDialogChange(newDate) {
+  if (!dateDialogTaskId) return;
+
+  const task = tasks.find((t) => t.id === dateDialogTaskId);
+  if (!task) return;
+
+  task.dueDate = newDate;
+  saveTasks();
+  render();
+  closeDateDialog();
 }
 
 function addTaskFromDialog(event) {
@@ -790,6 +967,9 @@ window.addEventListener('visibilitychange', () => {
 });
 document.addEventListener('keydown', handleKeyboardShortcuts);
 
+document.addEventListener('touchmove', handleTouchMove, { passive: false });
+document.addEventListener('touchend', handleTouchEnd, { passive: false });
+
 resetButton.addEventListener('click', openResetDialog);
 cancelResetButton.addEventListener('click', closeResetDialog);
 confirmResetButton.addEventListener('click', resetMatrix);
@@ -839,6 +1019,31 @@ addTaskDialog.addEventListener('click', (event) => {
   }
 });
 
+dateDialogSaveButton.addEventListener('click', () => {
+  saveDateDialogChange(dateDialogInput.value);
+});
+
+dateDialogClearButton.addEventListener('click', () => {
+  saveDateDialogChange('');
+});
+
+dateDialogCloseButton.addEventListener('click', closeDateDialog);
+
+dateDialog.addEventListener('click', (event) => {
+  if (event.target === dateDialog) {
+    closeDateDialog();
+  }
+});
+
+deleteDialogConfirmButton.addEventListener('click', confirmDelete);
+deleteDialogCancelButton.addEventListener('click', closeDeleteDialog);
+
+deleteDialog.addEventListener('click', (event) => {
+  if (event.target === deleteDialog) {
+    closeDeleteDialog();
+  }
+});
+
 const exportTasksMobile = document.getElementById('export-tasks-mobile');
 const importTasksMobile = document.getElementById('import-tasks-mobile');
 const resetMatrixMobile = document.getElementById('reset-matrix-mobile');
@@ -851,6 +1056,8 @@ if (resetMatrixMobile) resetMatrixMobile.addEventListener('click', openResetDial
 resetDialog.hidden = true;
 importDialog.hidden = true;
 addTaskDialog.hidden = true;
+dateDialog.hidden = true;
+deleteDialog.hidden = true;
 
 loadTheme();
 render();
